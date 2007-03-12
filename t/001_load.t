@@ -2,11 +2,9 @@
 
 # t/001_load.t - check module loading and create testing directory
 
-use Test::More tests => 2;
+use Test::More tests => 1;
 
 BEGIN { use_ok( 'Log::Log4perl::ConfigByInifile' ); }
 
-my $object = Log::Log4perl::ConfigByInifile->new ();
-isa_ok ($object, 'Log::Log4perl::ConfigByInifile');
 
 
