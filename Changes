@@ -5,4 +5,6 @@ Revision history for Perl module Log::Log4perl::ConfigByInifile
       first version, built on experiences of a cut&paste solution
       I use for a longer time.
 
+0.04 Fri Mar 16 18:38:00 2007
+     Perl Best Practices, no change of functionality
 

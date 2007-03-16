@@ -1,24 +1,34 @@
 package Log::Log4perl::ConfigByInifile;
 use strict;
 use warnings;
+use Log::Log4perl;
 use Params::Validate qw(:all);
 use Config::IniFiles;
+use Carp;
+
+# $Revision: 10 $
+# $Date: 2007-03-16 18:39:40 +0100 (Fri, 16 Mar 2007) $
+# $Id: ConfigByInifile.pm 10 2007-03-16 17:39:40Z horshack $
+# $HeadURL: http://svn.rosi13.de/svn/Log-Log4perl-ConfigByInifile/trunk/lib/Log/Log4perl/ConfigByInifile.pm $
+# $Author: horshack $
 
 BEGIN {
-    use Exporter ();
-    use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    $VERSION = '0.02';
-    @ISA     = qw(Exporter);
+    use base qw(Exporter);
+    our $VERSION = '0.04';
 
-    #Give a hoot don't pollute, do not export more than needed by default
-    @EXPORT      = qw();
-    @EXPORT_OK   = qw(ConfigByInifile);
-    %EXPORT_TAGS = ();
+    # our @EXPORT      = qw();
+    our @EXPORT_OK = qw(ConfigByInifile);
+
+    # our %EXPORT_TAGS = ();
 }
 
 =head1 NAME
 
 Log::Log4perl::ConfigByInifile - Get Log::Log4perl config from an ini-File
+
+=head1 VERSION
+
+0.03 - more Perl Best Practices with http://perlcritic.com/perl/critic.pl
 
 =head1 SYNOPSIS
 
@@ -49,7 +59,7 @@ section for Log4perl like this:
     [myfiles]
     ...
 
-=head1 USAGE
+=head1 SUBROUTINES/METHODS
 
 
 =head2 new
@@ -92,7 +102,7 @@ sub new {
     my $ini_section = $defaults{section};
 
     my $args_href = shift;
-    %$args_href = validate_with(
+    %{$args_href} = validate_with(
         params => $args_href,
         spec   => {
             ini_file => {
@@ -116,7 +126,7 @@ sub new {
     $anz_file_obj += exists $args_href->{ini_file} ? 1 : 0;
     $anz_file_obj += exists $args_href->{ini_obj}  ? 1 : 0;
     if ( $anz_file_obj != 1 ) {
-        die 'Submit either ini_file or ini_obj to new';
+        confess 'Submit either ini_file or ini_obj to new';
     }
 
     my $ini_obj;
@@ -132,17 +142,28 @@ sub new {
     # to our ini-file
 
     if ( !$ini_obj->SectionExists($ini_section) ) {
-        die "There must be a section '$ini_section' in the inifile";
+        confess "There must be a section '$ini_section' in the inifile";
     }
 
     my $log_conf;
     for my $var ( $ini_obj->Parameters($ini_section) ) {
-        next unless defined $var;
+        next if !defined $var;
         $log_conf .= sprintf "%s=%s\n", $var,
           $ini_obj->val( $ini_section, $var );
     }
     Log::Log4perl::init( \$log_conf );
+
+    # return something (PBP)
+    return 1;
 }
+
+=head1 DEPENDENCIES
+
+Depends on these Perl modules: 
+
+    Log::Log4perl;
+    Params::Validate;
+    Config::IniFiles;
 
 =head1 AUTHOR
 
@@ -151,7 +172,7 @@ sub new {
     horshack@lisa.franken.de
     http://lena.franken.de
 
-=head1 COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
